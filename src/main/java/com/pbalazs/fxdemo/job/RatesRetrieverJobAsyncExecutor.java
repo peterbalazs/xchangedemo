@@ -25,8 +25,8 @@ public class RatesRetrieverJobAsyncExecutor {
     private CachingService cachingService;
 
     @Async
-    public void runJob() {
-        logger.info("Running job to load rates from the provider");
+    public void runDailyJob() {
+        logger.info("Running daily job to load rates from the provider for the last 90 days");
 
         final Map<String, Map<String, String>> rates = rateLoaderService.retrieveRates();
         if (rates == null || rates.size() == 0) {
@@ -34,6 +34,23 @@ public class RatesRetrieverJobAsyncExecutor {
             return;
         }
 
+        storeRates(rates);
+    }
+
+    @Async
+    public void runHourlyJob() {
+        logger.info("Running hourly job to load latest rates from the provider");
+
+        final Map<String, Map<String, String>> rates = rateLoaderService.retrieveLatestRates();
+        if (rates == null || rates.size() == 0) {
+            logger.error("The rates were empty!");
+            return;
+        }
+
+        storeRates(rates);
+    }
+
+    private void storeRates(final Map<String, Map<String, String>> rates) {
         rates.forEach((date, ratesMap) -> {
             if (ratesMap != null) {
                 ratesMap.forEach((ccy, rate) -> {

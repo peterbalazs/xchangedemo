@@ -18,7 +18,7 @@ public class Application {
 
     @Bean
     ApplicationRunner init(RatesRetrieverJobAsyncExecutor executor) {
-        executor.runJob();
+        executor.runDailyJob();
         return null;
     }
 

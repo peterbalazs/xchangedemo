@@ -46,7 +46,7 @@ public class FxDemoController {
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No rate found for the specified currency - date pair")
     @ExceptionHandler(RateNotAvailableException.class)
     public void noRate() {
-
+        // empty
     }
 
     private FxResponseModel buildResponse(final String ccy, final String date, final String rate) {

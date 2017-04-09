@@ -39,7 +39,7 @@ public class RatesRetrieverJobAsyncExecutorTest {
     }
 
     @Test
-    public void test_runJob_success() {
+    public void test_runDailyJob_success() {
         final Map<String, Map<String, String>> rateMap = new HashMap<>();
         final Map<String, String> datedRateMap1 = new HashMap<>();
         final Map<String, String> datedRateMap2 = new HashMap<>();
@@ -51,7 +51,7 @@ public class RatesRetrieverJobAsyncExecutorTest {
         rateMap.put("2017-04-07", datedRateMap2);
         when(mockRateLoaderService.retrieveRates()).thenReturn(rateMap);
 
-        instance.runJob();
+        instance.runDailyJob();
 
         verify(mockCachingService, times(1)).store("CHF", "2017-04-07", "1.06");
         verify(mockCachingService, times(1)).store("GBP", "2017-04-07", "0.86");
@@ -60,10 +60,34 @@ public class RatesRetrieverJobAsyncExecutorTest {
     }
 
     @Test
-    public void test_runJob_nullRates() {
+    public void test_runDailyJob_nullRates() {
         when(mockRateLoaderService.retrieveRates()).thenReturn(null);
 
-        instance.runJob();
+        instance.runDailyJob();
+
+        verify(mockCachingService, times(0)).store(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void test_runHourlyJob_success() {
+        final Map<String, Map<String, String>> rateMap = new HashMap<>();
+        final Map<String, String> datedRateMap1 = new HashMap<>();
+        datedRateMap1.put("CHF", "1.05");
+        datedRateMap1.put("GBP", "0.87");
+        rateMap.put("2017-04-09", datedRateMap1);
+        when(mockRateLoaderService.retrieveLatestRates()).thenReturn(rateMap);
+
+        instance.runHourlyJob();
+
+        verify(mockCachingService, times(1)).store("CHF", "2017-04-09", "1.05");
+        verify(mockCachingService, times(1)).store("GBP", "2017-04-09", "0.87");
+    }
+
+    @Test
+    public void test_runHourlyJob_nullRates() {
+        when(mockRateLoaderService.retrieveLatestRates()).thenReturn(null);
+
+        instance.runHourlyJob();
 
         verify(mockCachingService, times(0)).store(anyString(), anyString(), anyString());
     }

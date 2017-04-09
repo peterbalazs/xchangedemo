@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.pbalazs.fxdemo.service.impl.EcbRateLoaderService.URL_ECB_XCHANGE_RATES_LATEST;
 import static com.pbalazs.fxdemo.service.impl.EcbRateLoaderService.URL_ECB_XCHANGE_RATE_LAST_90_DAYS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -147,5 +148,28 @@ public class EcbRateLoaderServiceTest {
 
         assertNotNull(result);
         assertEquals(2, result.size());
+    }
+
+    @Test
+    public void test_retrieveLatestRates_success() {
+        final XmlModel model = new XmlModelBuilder().cube("2017-04-09", "CHF", "1.06")
+                .cube("2017-04-09", "GBP", "0.86")
+                .build();
+        final List<HttpMessageConverter<?>> converter = new ArrayList<>();
+        when(mockRestTemplate.getMessageConverters()).thenReturn(converter);
+        when(mockRestTemplate.getForEntity(URL_ECB_XCHANGE_RATES_LATEST, XmlModel.class)).thenReturn(mockResponseEntity);
+        when(mockResponseEntity.getStatusCodeValue()).thenReturn(200);
+        when(mockResponseEntity.getBody()).thenReturn(model);
+
+        final Map<String, Map<String, String>> result = instance.retrieveLatestRates();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        final Map<String, String> map1 = result.get("2017-04-09");
+        assertNotNull(map1);
+        assertEquals(2, map1.size());
+        assertEquals("1.06", map1.get("CHF"));
+        assertEquals("0.86", map1.get("GBP"));
+        assertEquals(1, converter.size());
     }
 }

@@ -23,16 +23,26 @@ public class EcbRateLoaderService implements RateLoaderService {
     private static final Logger logger = LoggerFactory.getLogger(EcbRateLoaderService.class);
 
     static final String URL_ECB_XCHANGE_RATE_LAST_90_DAYS = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml";
+    static final String URL_ECB_XCHANGE_RATES_LATEST = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 
     @Override
     public Map<String, Map<String, String>> retrieveRates() {
+        return retrieveRates(URL_ECB_XCHANGE_RATE_LAST_90_DAYS);
+    }
+
+    @Override
+    public Map<String, Map<String, String>> retrieveLatestRates() {
+        return retrieveRates(URL_ECB_XCHANGE_RATES_LATEST);
+    }
+
+    private Map<String, Map<String, String>> retrieveRates(final String url) {
 
         final RestTemplate template = createRestTemplate();
         template.getMessageConverters().add(new MappingJackson2XmlHttpMessageConverter());
 
         final ResponseEntity<XmlModel> re;
         try {
-            re = template.getForEntity(URL_ECB_XCHANGE_RATE_LAST_90_DAYS, XmlModel.class);
+            re = template.getForEntity(url, XmlModel.class);
         }  catch (Throwable t) {
             logger.error("Error connecting to ECB server", t);
             return null;

@@ -12,4 +12,6 @@ public interface RateLoaderService {
      * the value if the rate
      */
     Map<String, Map<String, String>> retrieveRates();
+
+    Map<String, Map<String, String>> retrieveLatestRates();
 }

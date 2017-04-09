@@ -28,9 +28,9 @@ public class RatesRetrieverJobTest {
     }
 
     @Test
-    public void test() {
-        instance.runJob();
+    public void test_runDailyJob() {
+        instance.runDailyJob();
 
-        verify(mockRatesRetrieverJobAsyncExecutor, times(1)).runJob();
+        verify(mockRatesRetrieverJobAsyncExecutor, times(1)).runDailyJob();
     }
 }
