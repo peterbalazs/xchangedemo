@@ -12,7 +12,7 @@ public final class DateUtils {
 
     public static String validateDate(final String date) {
         if (date == null) {
-            return null;
+            throw new IllegalArgumentException("Date cannot be null");
         }
 
         try {

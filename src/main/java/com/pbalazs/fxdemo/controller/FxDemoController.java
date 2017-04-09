@@ -1,6 +1,7 @@
 package com.pbalazs.fxdemo.controller;
 
 import com.pbalazs.fxdemo.exceptions.RateNotAvailableException;
+import com.pbalazs.fxdemo.model.DateRatePair;
 import com.pbalazs.fxdemo.model.FxResponseModel;
 import com.pbalazs.fxdemo.service.RateService;
 import com.pbalazs.fxdemo.util.DateUtils;
@@ -28,17 +29,23 @@ public class FxDemoController {
     {
         logger.debug("Getting rate for {} on {}", ccy, date);
 
-        final String rate = rateService.getRateForCurrencyAndDate(ccy.toUpperCase(), date);
-        final FxResponseModel response = buildResponse(ccy, date, rate);
+        final DateRatePair dateRatePair = rateService.getRateForCurrencyAndDate(ccy.toUpperCase(), date);
+        final FxResponseModel response = buildResponse(ccy, dateRatePair.getDate(), dateRatePair.getRate());
 
         logger.info("Result: {}", response);
-        return buildResponse(ccy, date, rate);
+        return response;
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Date must be in format yyyy-MM-dd, ex: 2017-04-09")
     @ExceptionHandler(IllegalArgumentException.class)
     public void invalidParams() {
         // empty
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No rate found for the specified currency - date pair")
+    @ExceptionHandler(RateNotAvailableException.class)
+    public void noRate() {
+
     }
 
     private FxResponseModel buildResponse(final String ccy, final String date, final String rate) {

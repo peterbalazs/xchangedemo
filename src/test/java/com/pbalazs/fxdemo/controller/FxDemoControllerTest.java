@@ -1,5 +1,6 @@
 package com.pbalazs.fxdemo.controller;
 
+import com.pbalazs.fxdemo.model.DateRatePair;
 import com.pbalazs.fxdemo.service.RateService;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -37,10 +38,11 @@ public class FxDemoControllerTest {
         instance = new FxDemoController();
         ReflectionTestUtils.setField(instance, "rateService", mockRateService);
 
-        when(mockRateService.getRateForCurrencyAndDate("CHF", "2017-04-09")).thenReturn("1.070123");
-        when(mockRateService.getRateForCurrencyAndDate("GBP", "2017-04-09")).thenReturn("0.863720");
-        when(mockRateService.getRateForCurrencyAndDate("CHF", "2017-04-06")).thenReturn("1.068889");
-        when(mockRateService.getRateForCurrencyAndDate("GBP", "2017-04-06")).thenReturn("0.862901");
+        when(mockRateService.getRateForCurrencyAndDate("CHF", "2017-04-09")).thenReturn(new DateRatePair("2017-04-09", "1.070123"));
+        when(mockRateService.getRateForCurrencyAndDate("GBP", "2017-04-09")).thenReturn(new DateRatePair("2017-04-09", "0.863720"));
+        when(mockRateService.getRateForCurrencyAndDate("CHF", "2017-04-06")).thenReturn(new DateRatePair("2017-04-06", "1.068889"));
+        when(mockRateService.getRateForCurrencyAndDate("GBP", "2017-04-06")).thenReturn(new DateRatePair("2017-04-06", "0.862901"));
+        when(mockRateService.getRateForCurrencyAndDate("USD", "2017-04-09")).thenReturn(new DateRatePair("2017-04-07", "1.088888"));
 
         mockMvc = MockMvcBuilders.standaloneSetup(instance).build();
     }
@@ -67,6 +69,15 @@ public class FxDemoControllerTest {
                 .andExpect(jsonPath("$.currency", is("CHF")))
                 .andExpect(jsonPath("$.date", is("2017-04-06")))
                 .andExpect(jsonPath("$.rate", is("1.068889")));
+    }
+
+    @Test
+    public void test_getRateForCurrencyOnDate_bankingHolidays() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/rate/usd/2017-04-09")).andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.currency", is("USD")))
+                .andExpect(jsonPath("$.date", is("2017-04-07")))
+                .andExpect(jsonPath("$.rate", is("1.088888")));
     }
 
     @Test
