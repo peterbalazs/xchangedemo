@@ -6,4 +6,6 @@ package com.pbalazs.fxdemo.service;
 public interface CachingService {
 
     String retrieve(final String ccy, final String date);
+
+    void store(final String ccy, final String date, final String rate);
 }
