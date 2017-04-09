@@ -12,10 +12,9 @@ import java.util.Map;
 /**
  * Created by Peter on 4/9/2017.
  */
-@Service
-public class DefaultCachingService implements CachingService {
+public class SimpleCachingService implements CachingService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultCachingService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleCachingService.class);
 
     private final Map<CacheKey, String> cache = new HashMap<>();
 

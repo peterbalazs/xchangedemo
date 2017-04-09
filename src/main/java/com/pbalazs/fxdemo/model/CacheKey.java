@@ -34,12 +34,4 @@ public class CacheKey {
         final CacheKey that = (CacheKey) other;
         return date.equals(that.date) && currency.equalsIgnoreCase(that.currency);
     }
-
-    public String getCcy() {
-        return currency;
-    }
-
-    public String getDate() {
-        return date;
-    }
 }

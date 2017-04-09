@@ -9,13 +9,13 @@ import static org.junit.Assert.assertNull;
 /**
  * Created by Peter on 4/9/2017.
  */
-public class DefaultCachingServiceTest {
+public class GuavaCachingServiceTest {
 
-    private DefaultCachingService instance;
+    private GuavaCachingService instance;
 
     @Before
     public void init() {
-        instance = new DefaultCachingService();
+        instance = new GuavaCachingService();
     }
 
     @Test
@@ -24,9 +24,10 @@ public class DefaultCachingServiceTest {
 
         assertNull(result);
 
-        instance.store("CHF", "2017-04-09", "1.01");
+        instance.store("CHF", "2017-04-09", "1.02");
+        instance.store("USD", "2017-04-09", "1.06");
         result = instance.retrieve("CHF", "2017-04-09");
 
-        assertEquals("1.01", result);
+        assertEquals("1.02", result);
     }
 }
