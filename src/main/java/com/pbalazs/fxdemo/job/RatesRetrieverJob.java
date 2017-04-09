@@ -16,12 +16,12 @@ public class RatesRetrieverJob {
     /**
      * Run at 4 AM every day
      */
-    @Scheduled(cron = "00 00 04 * * ?")
+    @Scheduled(cron = "${job.daily.cron}")
     public void runDailyJob() {
         asyncExecutor.runDailyJob();
     }
 
-    @Scheduled(cron = "00 30 * * * ?")
+    @Scheduled(cron = "${job.hourly.cron}")
     public void runHourlyJob() {
         asyncExecutor.runHourlyJob();
     }

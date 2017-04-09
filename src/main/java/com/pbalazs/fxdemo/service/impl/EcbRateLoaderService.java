@@ -5,6 +5,7 @@ import com.pbalazs.fxdemo.service.RateLoaderService;
 import com.pbalazs.fxdemo.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.stereotype.Service;
@@ -22,17 +23,20 @@ public class EcbRateLoaderService implements RateLoaderService {
 
     private static final Logger logger = LoggerFactory.getLogger(EcbRateLoaderService.class);
 
-    static final String URL_ECB_XCHANGE_RATE_LAST_90_DAYS = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml";
-    static final String URL_ECB_XCHANGE_RATES_LATEST = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+    @Value("${url.ecb.days90}")
+    private String url90Days;
+
+    @Value("${url.ecb.latest}")
+    private String urlLatest;
 
     @Override
     public Map<String, Map<String, String>> retrieveRates() {
-        return retrieveRates(URL_ECB_XCHANGE_RATE_LAST_90_DAYS);
+        return retrieveRates(url90Days);
     }
 
     @Override
     public Map<String, Map<String, String>> retrieveLatestRates() {
-        return retrieveRates(URL_ECB_XCHANGE_RATES_LATEST);
+        return retrieveRates(urlLatest);
     }
 
     private Map<String, Map<String, String>> retrieveRates(final String url) {

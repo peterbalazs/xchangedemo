@@ -32,6 +32,7 @@ public class DefaultRateServiceTest {
     public void init() {
         instance = new DefaultRateService();
         ReflectionTestUtils.setField(instance, "cachingService", mockCachingService);
+        ReflectionTestUtils.setField(instance, "daysToCheckInThePast", 4);
     }
 
     @Test

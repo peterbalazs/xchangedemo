@@ -9,14 +9,13 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.pbalazs.fxdemo.service.impl.EcbRateLoaderService.URL_ECB_XCHANGE_RATES_LATEST;
-import static com.pbalazs.fxdemo.service.impl.EcbRateLoaderService.URL_ECB_XCHANGE_RATE_LAST_90_DAYS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -27,6 +26,9 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class EcbRateLoaderServiceTest {
+
+    private static final String URL_ECB_XCHANGE_RATE_LAST_90_DAYS = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml";
+    private static final String URL_ECB_XCHANGE_RATES_LATEST = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 
     private EcbRateLoaderService instance;
 
@@ -44,6 +46,8 @@ public class EcbRateLoaderServiceTest {
                 return mockRestTemplate;
             }
         };
+        ReflectionTestUtils.setField(instance, "url90Days", URL_ECB_XCHANGE_RATE_LAST_90_DAYS);
+        ReflectionTestUtils.setField(instance, "urlLatest", URL_ECB_XCHANGE_RATES_LATEST);
     }
 
     @Test

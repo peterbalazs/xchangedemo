@@ -6,6 +6,7 @@ import com.pbalazs.fxdemo.service.CachingService;
 import com.pbalazs.fxdemo.service.RateService;
 import com.pbalazs.fxdemo.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -22,6 +23,9 @@ public class DefaultRateService implements RateService {
 
     @Autowired
     private CachingService cachingService;
+
+    @Value("${rates.banking.holidays.max.days}")
+    private int daysToCheckInThePast;
 
     @Override
     public DateRatePair getRateForCurrencyAndDate(final String currency, final String date) throws RateNotAvailableException {
@@ -52,7 +56,7 @@ public class DefaultRateService implements RateService {
             return result;
         }
 
-        for (int i = 1; i <= 4; i++) {
+        for (int i = 1; i <= daysToCheckInThePast; i++) {
             cal.add(Calendar.DAY_OF_YEAR, -1);
             result.add(dateFormat.format(cal.getTime()));
         }
