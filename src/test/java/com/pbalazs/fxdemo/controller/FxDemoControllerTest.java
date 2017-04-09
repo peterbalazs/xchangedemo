@@ -2,6 +2,7 @@ package com.pbalazs.fxdemo.controller;
 
 import com.pbalazs.fxdemo.service.RateService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -58,5 +59,17 @@ public class FxDemoControllerTest {
                 .andExpect(jsonPath("$.currency", is("GBP")))
                 .andExpect(jsonPath("$.date", is("2017-04-06")))
                 .andExpect(jsonPath("$.rate", is("0.862901")));
+    }
+
+    @Test
+    public void test_getRateForCurrencyDate_wrongDateFormat() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/rate/CHF/2017_04_09")).andExpect(status().isBadRequest());
+        mockMvc.perform(MockMvcRequestBuilders.get("/rate/CHF/mfjsdkjfffg")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Ignore("inverted date format should fail, TODO: implement solution")
+    public void test_getRateForCurrencyDate_invertedDateFormat() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/rate/CHF/09-04-2017")).andExpect(status().isBadRequest());
     }
 }
