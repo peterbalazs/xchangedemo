@@ -10,15 +10,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by Peter on 4/9/2017.
@@ -34,7 +33,7 @@ public class FxDemoControllerTest {
     private MockMvc mockMvc;
 
     @Before
-    public void init() {
+    public void init() throws Exception {
         instance = new FxDemoController();
         ReflectionTestUtils.setField(instance, "rateService", mockRateService);
 
@@ -62,9 +61,21 @@ public class FxDemoControllerTest {
     }
 
     @Test
+    public void test_getRateForCurrencyOnDate_lowercaseDateFlow() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/rate/cHf/2017-04-06")).andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.currency", is("CHF")))
+                .andExpect(jsonPath("$.date", is("2017-04-06")))
+                .andExpect(jsonPath("$.rate", is("1.068889")));
+    }
+
+    @Test
     public void test_getRateForCurrencyDate_wrongDateFormat() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/rate/CHF/2017_04_09")).andExpect(status().isBadRequest());
+        when(mockRateService.getRateForCurrencyAndDate(anyString(), eq("2017_04_09"))).thenThrow(IllegalArgumentException.class);
+        when(mockRateService.getRateForCurrencyAndDate(anyString(), eq("mfjsdkjfffg"))).thenThrow(IllegalArgumentException.class);
+
         mockMvc.perform(MockMvcRequestBuilders.get("/rate/CHF/mfjsdkjfffg")).andExpect(status().isBadRequest());
+        mockMvc.perform(MockMvcRequestBuilders.get("/rate/CHF/2017_04_09")).andExpect(status().isBadRequest());
     }
 
     @Test

@@ -16,7 +16,7 @@ public final class DateUtils {
         }
 
         try {
-            new SimpleDateFormat(DateUtils.DATE_PATTERN).parse(date);
+            new SimpleDateFormat(DATE_PATTERN).parse(date);
         } catch (ParseException pe) {
             throw new IllegalArgumentException("Invalid date format");
         }

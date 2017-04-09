@@ -1,5 +1,8 @@
 package com.pbalazs.fxdemo.model;
 
+import org.springframework.core.style.ToStringCreator;
+import org.springframework.core.style.ToStringStyler;
+
 /**
  * Created by Peter on 4/9/2017.
  */
@@ -10,6 +13,14 @@ public class FxResponseModel {
     private String date;
 
     private String rate;
+
+    @Override
+    public String toString() {
+        return new ToStringCreator(this).append("currency", currency)
+                .append("date", date)
+                .append("rate", rate)
+                .toString();
+    }
 
     public String getCurrency() {
         return currency;
